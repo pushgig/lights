@@ -1,0 +1,4 @@
+60mA per pixel
+3 bits per pixel
+
+60px per strip = 1.2A and 180
