@@ -1,10 +1,10 @@
-#include <MIDI.h>  // Add Midi Library
+// #include <MIDI.h>  // Add Midi Library
 #include <Ramp.h> // Add RAMP library
 
 #define LED 13    // Arduino Board LED is on Pin 13
 
 //Create an instance of the library with default name, serial port and settings
-MIDI_CREATE_DEFAULT_INSTANCE();
+// MIDI_CREATE_DEFAULT_INSTANCE();
 
 // Create a Ramp instance for each light so we can transition values smoothly
 ramp ramps[5];
@@ -21,25 +21,33 @@ void setup() {
   
   // OMNI sets it to listen to all channels.. MIDI.begin(2) would set it 
   // to respond to notes on channel 2 only.
-  MIDI.begin(MIDI_CHANNEL_OMNI);
+  // MIDI.begin(MIDI_CHANNEL_OMNI);
   
-  MIDI.setHandleNoteOn(handleNoteOn); 
-  MIDI.setHandleNoteOff(handleNoteOff);
+  // MIDI.setHandleNoteOn(handleNoteOn); 
+  // MIDI.setHandleNoteOff(handleNoteOff);
   
   Serial.begin(9600);
   
   Serial.print("Value start at: ");
   Serial.println(ramps[0].value());
 
-  Serial.print("Strating interpolation");
+  Serial.print("Starting interpolation");
   
   // start interpolation (value to go to, duration)
-  ramps[0].go(0, 0);                
+  ramps[0].go(255, 1000, LINEAR, FORTHANDBACK);                
 }
 
 // Main loop
 void loop() { 
-  MIDI.read(); // Continuously check if Midi data has been received.
+  // MIDI.read(); // Continuously check if Midi data has been received.
+  
+  Serial.print("Actual value is: ");
+  Serial.println(ramps[0].update()); 
+  
+  digitalWrite(LED, HIGH);  //Turn LED on 
+  delay(ramps[0].update());
+  digitalWrite(LED, LOW);  //Turn LED off
+  delay(ramps[0].update());
 }
 
 void handleNoteOn(byte channel, byte pitch, byte velocity) { 
