@@ -15,13 +15,19 @@
 #include <Ramp.h> // Add RAMP library
 #include <TimerOne.h>                    
 
-volatile int i=0;               // Variable to use as a counter
-volatile boolean zero_cross=0;  // Boolean to store a "switch" to tell us if we have crossed zero
+volatile int cnt1 = 0;               // Variable to use as a counter
+volatile int cnt2 = 0;
+
+volatile boolean zero_cross1 = 1;  // Boolean to store a "switch" to tell us if we have crossed zero
+volatile boolean zero_cross2 = 1;
 int PSSR1 = 4;                  // PowerSSR Tail connected to digital pin 4
-int dim = 100;                   // Default dimming level (0-128)  0 = on, 128 = off
+int PSSR2 = 5;                  // PowerSSR Tail connected to digital pin 5
+int dim1 = 100;                   // Default dimming level (0-128)  0 = on, 128 = off
+int dim2 = 100;
 int freqStep = 60;              // Set to 60hz mains
 int LED = 0;                    // LED on Arduino board on digital pin 13
-ramp dimRamp;
+ramp dimRamp1;
+ramp dimRamp2;
 
 void setup()
 {
@@ -29,12 +35,16 @@ void setup()
   
  pinMode(LED, OUTPUT);
  pinMode(PSSR1, OUTPUT);                // Set SSR1 pin as output
+ pinMode(PSSR2, OUTPUT);                // Set SSR2 pin as output
  attachInterrupt(0, zero_cross_detect, RISING);   // Attach an Interupt to digital pin 2 (interupt 0),
  Timer1.initialize(freqStep);
- Timer1.attachInterrupt(dim_check,freqStep);
+ Timer1.attachInterrupt(dim_check, freqStep);
  
- dimRamp.go(128);
- dimRamp.go(80, 10000, LINEAR, FORTHANDBACK);   
+ dimRamp1.go(128);
+ dimRamp2.go(128);
+ 
+ dimRamp1.go(80, 125, LINEAR, FORTHANDBACK);
+ dimRamp2.go(80, 1000, LINEAR, FORTHANDBACK);   
 }
 
 
@@ -54,33 +64,62 @@ void loop()                        // Main loop
 // delay(500);
 // dim = 0;
 // delay(500);
-dim = dimRamp.update();
+dim1 = dimRamp1.update();
+dim2 = dimRamp2.update();
 }
 
 // Functions
-
-void dim_check() {                  // This function will fire the triac at the proper time
- // Serial.println("dim_check: "); 
- // Serial.print(zero_cross);
- 
- if(zero_cross == 1) {              // First check to make sure the zero-cross has happened else do nothing
-   if(i>=dim) {
-     // Serial.println("fire PSSR");
-    delayMicroseconds(100);        //These values will fire the PSSR Tail.
-    digitalWrite(PSSR1, HIGH);
+void dim_check() {
+  boolean burn1 = 0;
+  boolean burn2 = 0;
+  
+  if(zero_cross1 == 1) {
+    if(cnt1 >= dim1) {
+      burn1 = 1;
+      zero_cross1 = 0;
+      cnt1 = 0;
+    } else {
+      cnt1++;
+    }
+  }
+  
+  if(zero_cross2 == 1) {
+    if(cnt2 >= dim2) {
+      burn2 = 1;
+      zero_cross2 = 0;
+      cnt2 = 0;
+    } else {
+      cnt2++;
+    }
+  }
+    
+  if (burn1 == 1 || burn2 == 1) {
+    delayMicroseconds(100);
+    
+    if (burn1 == 1) {
+      digitalWrite(PSSR1, HIGH);
+    }
+    
+    if (burn2 == 1) {
+      digitalWrite(PSSR2, HIGH);
+    }
+    
     delayMicroseconds(50);
-    digitalWrite(PSSR1, LOW); 
-     i = 0;                         // Reset the accumulator
-     zero_cross = 0;                // Reset the zero_cross so it may be turned on again at the next zero_cross_detect    
-   } else {
-     i++;                           // If the dimming value has not been reached, increment the counter
-   }                                // End dim check
- }                                  // End zero_cross check
+    
+    if (burn1 == 1) {
+      digitalWrite(PSSR1, LOW);
+    }
+    
+    if (burn2 == 1) {
+      digitalWrite(PSSR2, LOW);
+    }
+  }
 }
 
 void zero_cross_detect() 
 {
   // Serial.println("zero cross detect"); 
-   zero_cross = 1;
+   zero_cross1 = 1;
+   zero_cross2 = 1;
    // set the boolean to true to tell our dimming function that a zero cross has occured
 } 
