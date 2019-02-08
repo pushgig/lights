@@ -13,6 +13,7 @@ class PowerSSR
     PowerSSR();
     void init(int pint);
     ramp value;
+    void go(int, unsigned long, ramp_mode);
     void go(int, unsigned long, ramp_mode, loop_mode);
     void update();
     void zeroCrossed();

@@ -24,6 +24,10 @@ void PowerSSR::init(int pin) {
   value.go(128);
 }
 
+void PowerSSR::go(int dim, unsigned long dur, ramp_mode rmode) {
+  value.go(dim, dur, rmode);
+}
+
 void PowerSSR::go(int dim, unsigned long dur, ramp_mode rmode, loop_mode lmode) {
   value.go(dim, dur, rmode, lmode);
 }

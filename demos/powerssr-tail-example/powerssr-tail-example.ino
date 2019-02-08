@@ -12,6 +12,7 @@
 
 */
 
+#include <MIDI.h>
 #include <TimerOne.h>
 #include "PowerSSR.h"
 
@@ -23,19 +24,31 @@ const int NUM_SSRS = 2;
 // Set to 60hz mains for now
 int freqStep = 60;
 
+volatile boolean isOn = 0;
+volatile int speed = 100;
+volatile int dim = 128;
+
+//Create an instance of the library with default name, serial port and settings
+MIDI_CREATE_DEFAULT_INSTANCE();
+
 PowerSSR ssrs[NUM_SSRS];
 
 void setup()
 {
-  Serial.begin(9600);
+  // Serial.begin(31250);
   pinMode(LED, OUTPUT);
+  
+  // OMNI sets it to listen to all channels.. MIDI.begin(2) would set it 
+  // to respond to notes on channel 2 only.
+  MIDI.begin(MIDI_CHANNEL_OMNI);
+  
+  MIDI.setHandleNoteOn(handleNoteOn); 
+  MIDI.setHandleNoteOff(handleNoteOff);
+  MIDI.setHandleControlChange(handleControlChange);
   
   for (int i = 0; i < NUM_SSRS; i++) {
     ssrs[i].init(i + 4);
   }
-
-  ssrs[0].go(100, 125, LINEAR, FORTHANDBACK);
-  ssrs[1].go(100, 1000, LINEAR, FORTHANDBACK);
 
   // Attach an Interupt to digital pin 2 (interupt 0),
   attachInterrupt(0, handleZeroCrossInterrupt, RISING);
@@ -47,6 +60,9 @@ void setup()
 
 void loop()
 {
+  // Continuously check if Midi data has been received.
+  MIDI.read();
+  
   for (int i = 0; i < NUM_SSRS; i++) {
     ssrs[i].update();
   }
@@ -64,4 +80,46 @@ void handleZeroCrossInterrupt()
   for (int i = 0; i < NUM_SSRS; i++) {
     ssrs[i].zeroCrossed();
   }
+}
+
+void handleNoteOn(byte channel, byte pitch, byte velocity) { 
+  digitalWrite(LED, HIGH);
+  
+  if (isOn == 1) {
+    ssrs[0].go(128, 250, LINEAR);
+    ssrs[1].go(128, 250, LINEAR);
+    isOn = 0;
+  } else {
+    isOn = 1;
+    ssrs[0].go(20, 250, LINEAR);
+    ssrs[1].go(20, 250, LINEAR);
+  }
+  
+}
+
+// * A NOTE ON message with Velocity = 0 will be treated as a NOTE OFF message *
+void handleNoteOff(byte channel, byte pitch, byte velocity) { 
+  digitalWrite(LED, LOW);
+  // ssrs[0].go(128, 500, LINEAR);
+  // ssrs[1].go(128, 500, LINEAR);
+}
+
+void handleControlChange(byte channel, byte pitch, byte velocity) { 
+  digitalWrite(LED, LOW);
+  
+  int vel = (int) velocity;
+  // int val = map(vel, , 127, 0, 128);
+  
+  if (pitch == 0x07) {
+    // dimmer
+    dim = 128 - vel;
+  }
+  
+  if (pitch == 0x1B) {
+    // speed
+    speed = (100 + 3000) - map(vel, 0, 127, 100, 3000);
+  }
+  
+  ssrs[0].go(dim, speed, LINEAR);
+  ssrs[1].go(dim, speed, LINEAR);
 }
