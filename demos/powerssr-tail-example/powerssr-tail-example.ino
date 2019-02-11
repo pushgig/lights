@@ -12,12 +12,14 @@
 
 */
 
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 #include <MIDI.h>
 #include <TimerOne.h>
 #include "PowerSSR.h"
 
-int PSSR1 = 4;                  // PowerSSR Tail connected to digital pin 4
-int PSSR2 = 5;                  // PowerSSR Tail connected to digital pin 5
+int PSSR1 = 3;                  // PowerSSR Tail connected to digital pin 4
+int PSSR2 = 4;                  // PowerSSR Tail connected to digital pin 5
 int LED = 0;                    // LED on Arduino board on digital pin 13
 const int NUM_SSRS = 2;
 
@@ -28,7 +30,12 @@ volatile boolean isOn = 0;
 volatile int speed = 100;
 volatile int dim = 128;
 
-//Create an instance of the library with default name, serial port and settings
+byte LCD_ADDRESS = 0x27;
+
+// Create instance of LCD library
+LiquidCrystal_I2C lcd(LCD_ADDRESS, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
+
+// Create an instance of the library with default name, serial port and settings
 MIDI_CREATE_DEFAULT_INSTANCE();
 
 PowerSSR ssrs[NUM_SSRS];
@@ -36,6 +43,13 @@ PowerSSR ssrs[NUM_SSRS];
 void setup()
 {
   // Serial.begin(31250);
+  lcd.begin(20, 4);
+  lcd.clear();
+  
+  // TODO: perform a quick system check and 
+  // only print FUCK YEAH if everything passes
+  lcd.print("FUCK YEAH");
+  
   pinMode(LED, OUTPUT);
   
   // OMNI sets it to listen to all channels.. MIDI.begin(2) would set it 
@@ -56,6 +70,9 @@ void setup()
   // Initialize timer
   Timer1.initialize(freqStep);
   Timer1.attachInterrupt(handleTimerInterrupt, freqStep);
+  
+  ssrs[0].go(0, 5000, LINEAR);
+  ssrs[1].go(0, 5000, LINEAR);
 }
 
 void loop()
@@ -85,6 +102,15 @@ void handleZeroCrossInterrupt()
 void handleNoteOn(byte channel, byte pitch, byte velocity) { 
   digitalWrite(LED, HIGH);
   
+  lcd.clear();
+  lcd.print("MIDI: Note On");
+  lcd.setCursor(0, 1);
+  lcd.print("Pitch: ");
+  lcd.print(pitch);
+  lcd.setCursor(0, 2);
+  lcd.print("Velocity: ");
+  lcd.print(velocity);
+  
   if (isOn == 1) {
     ssrs[0].go(128, 250, LINEAR);
     ssrs[1].go(128, 250, LINEAR);
@@ -100,12 +126,28 @@ void handleNoteOn(byte channel, byte pitch, byte velocity) {
 // * A NOTE ON message with Velocity = 0 will be treated as a NOTE OFF message *
 void handleNoteOff(byte channel, byte pitch, byte velocity) { 
   digitalWrite(LED, LOW);
-  // ssrs[0].go(128, 500, LINEAR);
-  // ssrs[1].go(128, 500, LINEAR);
+  
+  lcd.clear();
+  lcd.print("MIDI: Note Off");
+  lcd.setCursor(0, 1);
+  lcd.print("Pitch: ");
+  lcd.print(pitch);
+  lcd.setCursor(0, 2);
+  lcd.print("Velocity: ");
+  lcd.print(velocity);
 }
 
 void handleControlChange(byte channel, byte pitch, byte velocity) { 
   digitalWrite(LED, LOW);
+  
+  lcd.clear();
+  lcd.print("MIDI: Control Change");
+  lcd.setCursor(0, 1);
+  lcd.print("Pitch: ");
+  lcd.print(pitch);
+  lcd.setCursor(0, 2);
+  lcd.print("Velocity: ");
+  lcd.print(velocity);
   
   int vel = (int) velocity;
   // int val = map(vel, , 127, 0, 128);
