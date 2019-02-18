@@ -21,7 +21,7 @@
 int PSSR1 = 3;                  // PowerSSR Tail connected to digital pin 4
 int PSSR2 = 4;                  // PowerSSR Tail connected to digital pin 5
 int LED = 0;                    // LED on Arduino board on digital pin 13
-const int NUM_SSRS = 2;
+const int NUM_SSRS = 5;
 
 // Set to 60hz mains for now
 int freqStep = 60;
@@ -29,6 +29,7 @@ int freqStep = 60;
 volatile boolean isOn = 0;
 volatile int speed = 100;
 volatile int dim = 128;
+unsigned long currentMicros = 0;
 
 byte LCD_ADDRESS = 0x27;
 
@@ -61,7 +62,7 @@ void setup()
   MIDI.setHandleControlChange(handleControlChange);
   
   for (int i = 0; i < NUM_SSRS; i++) {
-    ssrs[i].init(i + 4);
+    ssrs[i].init(i + 3);
   }
 
   // Attach an Interupt to digital pin 2 (interupt 0),
@@ -71,8 +72,11 @@ void setup()
   Timer1.initialize(freqStep);
   Timer1.attachInterrupt(handleTimerInterrupt, freqStep);
   
-  ssrs[0].go(0, 5000, LINEAR);
-  ssrs[1].go(0, 5000, LINEAR);
+  // ssrs[0].go(80, 2000, LINEAR);
+  // ssrs[1].go(80, 4000, LINEAR);
+  // ssrs[2].go(80, 6000, LINEAR);
+  // ssrs[3].go(80, 8000, LINEAR);
+  // ssrs[4].go(80, 10000, LINEAR);
 }
 
 void loop()
@@ -87,8 +91,10 @@ void loop()
 
 // Functions
 void handleTimerInterrupt() {
+  currentMicros = micros();
+  
   for (int i = 0; i < NUM_SSRS; i++) {
-    ssrs[i].burn();
+    ssrs[i].burn(currentMicros);
   }
 }
 
@@ -111,30 +117,103 @@ void handleNoteOn(byte channel, byte pitch, byte velocity) {
   lcd.print("Velocity: ");
   lcd.print(velocity);
   
-  if (isOn == 1) {
-    ssrs[0].go(128, 250, LINEAR);
-    ssrs[1].go(128, 250, LINEAR);
-    isOn = 0;
-  } else {
-    isOn = 1;
-    ssrs[0].go(20, 250, LINEAR);
-    ssrs[1].go(20, 250, LINEAR);
+  int ssr = -1;
+  
+  // alesis pad
+  // switch(pitch) {
+  //   case 48:
+  //     ssr = 0;
+  //     break;
+  //   case 45:
+  //     ssr = 1;
+  //     break;
+  //   case 36:
+  //     ssr = 2;
+  //     break;
+  //   case 38:
+  //     ssr = 3;
+  //     break;
+  //   case 42:
+  //     ssr = 4;
+  //     break;
+  // }
+  
+  switch(pitch) {
+    case 96:
+      ssr = 0;
+      break;
+    case 98:
+      ssr = 1;
+      break;
+    case 100:
+      ssr = 2;
+      break;
+    case 101:
+      ssr = 3;
+      break;
+    case 103:
+      ssr = 4;
+      break;
+    case 108:
+      // C7: flood
+      ssr = 10;
+      break;
   }
   
+  lcd.setCursor(0, 3);
+  lcd.print("SSR: ");
+  lcd.print(ssr);
+  
+  if (ssr == 10) {
+    // flood
+    for (int i = 0; i < NUM_SSRS; i++) {
+      ssrs[i].go(128 - velocity);
+    }
+  } else if (ssr >= 0) {
+    ssrs[ssr].go(128 - velocity);
+  }
 }
 
 // * A NOTE ON message with Velocity = 0 will be treated as a NOTE OFF message *
 void handleNoteOff(byte channel, byte pitch, byte velocity) { 
   digitalWrite(LED, LOW);
   
-  lcd.clear();
-  lcd.print("MIDI: Note Off");
-  lcd.setCursor(0, 1);
-  lcd.print("Pitch: ");
-  lcd.print(pitch);
-  lcd.setCursor(0, 2);
-  lcd.print("Velocity: ");
-  lcd.print(velocity);
+  // lcd.clear();
+  // lcd.print("MIDI: Note Off");
+  // lcd.setCursor(0, 1);
+  // lcd.print("Pitch: ");
+  // lcd.print(pitch);
+  // lcd.setCursor(0, 2);
+  // lcd.print("Velocity: ");
+  // lcd.print(velocity);
+  
+  int ssr = -1;
+  
+  switch(pitch) {
+    case 96:
+      ssr = 0;
+      break;
+    case 98:
+      ssr = 1;
+      break;
+    case 100:
+      ssr = 2;
+      break;
+    case 101:
+      ssr = 3;
+      break;
+    case 103:
+      ssr = 4;
+      break;
+  }
+  
+  lcd.setCursor(0, 3);
+  lcd.print("SSR: ");
+  lcd.print(ssr);
+  
+  if (ssr >= 0) {
+    ssrs[ssr].go(128);
+  }
 }
 
 void handleControlChange(byte channel, byte pitch, byte velocity) { 
@@ -162,6 +241,7 @@ void handleControlChange(byte channel, byte pitch, byte velocity) {
     speed = (100 + 3000) - map(vel, 0, 127, 100, 3000);
   }
   
-  ssrs[0].go(dim, speed, LINEAR);
-  ssrs[1].go(dim, speed, LINEAR);
+  for (int i = 0; i < NUM_SSRS; i++) {
+    ssrs[i].go(dim, speed, LINEAR);
+  }
 }

@@ -19,9 +19,15 @@ void PowerSSR::init(int pin) {
   _dim = 128;
   _dimCount = 0;
   _zeroCrossed = 0;
+  _previousMicros = 0;
+  _isBurning = 0;
   
   // start completely dimmed
   value.go(128);
+}
+
+void PowerSSR::go(int dim) {
+  value.go(dim);
 }
 
 void PowerSSR::go(int dim, unsigned long dur, ramp_mode rmode) {
@@ -44,17 +50,27 @@ void PowerSSR::zeroCrossed()
   _zeroCrossed = 1;
 }
 
-void PowerSSR::burn()
+void PowerSSR::burn(unsigned long currentMicros)
 {
+  if (currentMicros < _previousMicros) {
+    // micros() will overflow (go back to zero) after around 70 minutes
+    _previousMicros = currentMicros;
+  }
+  
   if(_zeroCrossed == 1) {
     if(_dimCount >= _dim) {
-      delayMicroseconds(100);
-      digitalWrite(_pin, HIGH);
-      delayMicroseconds(50);
-      digitalWrite(_pin, LOW);
+      if (_isBurning == 0 && currentMicros - _previousMicros >= 100) {
+        digitalWrite(_pin, HIGH);
+        _previousMicros = currentMicros;
+        _isBurning = 1;
+      }
       
-      _zeroCrossed = 0;
-      _dimCount = 0;
+      if (_isBurning == 1 && currentMicros - _previousMicros >= 50) {
+        digitalWrite(_pin, LOW);
+        _isBurning = 0;
+        _zeroCrossed = 0;
+        _dimCount = 0;
+      }
     } else {
       _dimCount++;
     }
