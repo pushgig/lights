@@ -1,8 +1,8 @@
 /*
-  PulseAnimation.h
+  StopAnimation.h
 */
-#ifndef PulseAnimation_h
-#define PulseAnimation_h
+#ifndef StopAnimation_h
+#define StopAnimation_h
 
 #include "Arduino.h"
 #include "PowerSSR.h"
@@ -10,15 +10,15 @@
 
 #include <TweenDuino.h>
 
-class PulseAnimation : public SSRAnimation
+class StopAnimation : public SSRAnimation
 {
   public:
-    PulseAnimation(PowerSSR* ssrs);
-    virtual ~PulseAnimation(){}
+    StopAnimation(PowerSSR* ssrs);
+    virtual ~StopAnimation(){}
     virtual void begin(uint32_t millis);
     virtual void update(uint32_t millis);
   private:
-    TweenDuino::Timeline timeline;
+    TweenDuino::Tween *tween;
     float _value;
 };
 

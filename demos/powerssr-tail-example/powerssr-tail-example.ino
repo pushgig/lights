@@ -19,8 +19,10 @@
 #include <TimerOne.h>
 #include "PowerSSR.h"
 #include "SSRAnimation.h"
-#include "PulseAnimation.h"
+#include "StopAnimation.h"
 #include "FloodAnimation.h"
+#include "PulseAnimation.h"
+#include "DialAnimation.h"
 
 int LED = 0;
 byte LCD_ADDRESS = 0x27;
@@ -42,10 +44,12 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 PowerSSR ssrs[NUM_SSRS];
 
 // Create initial animation
-PulseAnimation pulse(ssrs);
+StopAnimation stop(ssrs);
 FloodAnimation flood(ssrs);
+PulseAnimation pulse(ssrs);
+DialAnimation dial(ssrs);
 
-int animation = 1;
+int animation = 0;
 
 void setup()
 {
@@ -82,7 +86,7 @@ void setup()
   SSRAnimation& anim = currentAnimation();
 
   // Tell the tween that time has changed and to adjust its calculations.
-  anim.start();
+  anim.begin(millis());
 }
 
 void loop()
@@ -95,16 +99,6 @@ void loop()
 }
 
 // Functions
-SSRAnimation& currentAnimation() {
-  switch(animation) {
-    case 0:
-      return flood;
-    case 1:
-    default:
-      return pulse;
-  }
-}
-
 void handleTimerInterrupt() {
   currentMicros = micros();
   
@@ -281,8 +275,28 @@ void handleProgramChange(byte channel, byte number) {
     case 11:
       animation = 1;
       break;
+    case 12:
+      animation = 2;
+      break;
+    case 13:
+      animation = 3;
+      break;
   }
   
   SSRAnimation& anim = currentAnimation();
-  anim.start();
+  anim.begin(millis());
+}
+
+SSRAnimation& currentAnimation() {
+  switch(animation) {
+    case 0:
+    default:
+      return stop;
+    case 1:
+      return flood;
+    case 2:
+      return pulse;
+    case 3:
+      return dial;
+  }
 }

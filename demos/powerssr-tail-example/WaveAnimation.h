@@ -1,8 +1,8 @@
 /*
-  PulseAnimation.h
+  WaveAnimation.h
 */
-#ifndef PulseAnimation_h
-#define PulseAnimation_h
+#ifndef WaveAnimation_h
+#define WaveAnimation_h
 
 #include "Arduino.h"
 #include "PowerSSR.h"
@@ -10,11 +10,11 @@
 
 #include <TweenDuino.h>
 
-class PulseAnimation : public SSRAnimation
+class WaveAnimation : public SSRAnimation
 {
   public:
-    PulseAnimation(PowerSSR* ssrs);
-    virtual ~PulseAnimation(){}
+    WaveAnimation(PowerSSR* ssrs);
+    virtual ~WaveAnimation(){}
     virtual void begin(uint32_t millis);
     virtual void update(uint32_t millis);
   private:

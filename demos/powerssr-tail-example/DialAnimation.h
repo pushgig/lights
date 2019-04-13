@@ -1,8 +1,8 @@
 /*
-  PulseAnimation.h
+  DialAnimation.h
 */
-#ifndef PulseAnimation_h
-#define PulseAnimation_h
+#ifndef DialAnimation_h
+#define DialAnimation_h
 
 #include "Arduino.h"
 #include "PowerSSR.h"
@@ -10,15 +10,16 @@
 
 #include <TweenDuino.h>
 
-class PulseAnimation : public SSRAnimation
+class DialAnimation : public SSRAnimation
 {
   public:
-    PulseAnimation(PowerSSR* ssrs);
-    virtual ~PulseAnimation(){}
+    DialAnimation(PowerSSR* ssrs);
+    virtual ~DialAnimation(){}
     virtual void begin(uint32_t millis);
     virtual void update(uint32_t millis);
   private:
-    TweenDuino::Timeline timeline;
+    TweenDuino::Tween *tween;
+    int _count;
     float _value;
 };
 

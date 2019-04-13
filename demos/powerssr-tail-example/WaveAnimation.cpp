@@ -1,14 +1,14 @@
 /*
-  PulseAnimation.cpp
+  WaveAnimation.cpp
 */
 
 #include "Arduino.h"
 #include <TweenDuino.h>
 #include "PowerSSR.h"
 #include "SSRAnimation.h"
-#include "PulseAnimation.h"
+#include "WaveAnimation.h"
 
-PulseAnimation::PulseAnimation(PowerSSR* ssrs) : SSRAnimation(ssrs)
+WaveAnimation::WaveAnimation(PowerSSR* ssrs) : SSRAnimation(ssrs)
 {
   _value = 127;
   
@@ -19,13 +19,13 @@ PulseAnimation::PulseAnimation(PowerSSR* ssrs) : SSRAnimation(ssrs)
   timeline.addTo(_value, 120, 5000);
 }
 
-void PulseAnimation::begin(uint32_t millis) {
+void WaveAnimation::begin(uint32_t millis) {
   // nothing here
   _value = 127;
   timeline.restartFrom(millis);
 }
 
-void PulseAnimation::update(uint32_t millis) {
+void WaveAnimation::update(uint32_t millis) {
   timeline.update(millis);
   int dim = round(_value);
   

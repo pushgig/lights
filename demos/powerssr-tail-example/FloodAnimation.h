@@ -15,7 +15,7 @@ class FloodAnimation : public SSRAnimation
   public:
     FloodAnimation(PowerSSR* ssrs);
     virtual ~FloodAnimation(){}
-    virtual void start();
+    virtual void begin(uint32_t millis);
     virtual void update(uint32_t millis);
   private:
     TweenDuino::Tween *tween;
