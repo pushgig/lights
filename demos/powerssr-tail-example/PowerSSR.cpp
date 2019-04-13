@@ -30,6 +30,10 @@ void PowerSSR::go(int dim) {
   value.go(dim);
 }
 
+void PowerSSR::go(int dim, unsigned long dur) {
+  value.go(dim, dur);
+}
+
 void PowerSSR::go(int dim, unsigned long dur, ramp_mode rmode) {
   value.go(dim, dur, rmode);
 }
@@ -40,9 +44,10 @@ void PowerSSR::go(int dim, unsigned long dur, ramp_mode rmode, loop_mode lmode) 
 
 void PowerSSR::update() {
   _dim = value.update();
-  
-  // Serial.print("Got value ");
-  // Serial.println(_dim);
+}
+
+void PowerSSR::update(int dim) {
+  _dim = dim;
 }
 
 void PowerSSR::zeroCrossed()
