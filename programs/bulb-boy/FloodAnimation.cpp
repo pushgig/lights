@@ -4,32 +4,32 @@
 
 #include "Arduino.h"
 #include <TweenDuino.h>
+#include "Config.h"
 #include "PowerSSR.h"
 #include "SSRAnimation.h"
 #include "FloodAnimation.h"
 
 FloodAnimation::FloodAnimation(PowerSSR* ssrs) : SSRAnimation(ssrs)
 {
-  _value = 127;
+  // _value = MIN_BRIGHT;
   
-  TweenDuino::Tween::Ease ease = TweenDuino::Tween::Ease::QUAD;
-  TweenDuino::Tween::EaseType easeType = TweenDuino::Tween::EaseType::OUT;
-  
-  tween = TweenDuino::Tween::to(_value, 500, 0, ease, easeType);
+  // TweenDuino::Tween::Ease ease = TweenDuino::Tween::Ease::QUAD;
+  // TweenDuino::Tween::EaseType easeType = TweenDuino::Tween::EaseType::OUT;
+  // 
+  // tween = TweenDuino::Tween::to(_value, 500, MAX_BRIGHT, ease, easeType);
 }
 
-void FloodAnimation::begin(uint32_t millis) {
+void FloodAnimation::start(uint32_t millis) {
   // nothing here
-  _value = 127;
-  tween->restartFrom(millis);
+  // _value = MAX_BRIGHT;
+  // tween->restartFrom(millis);
 }
 
 void FloodAnimation::update(uint32_t millis) {
-  tween->update(millis);
-  int dim = round(_value);
+  // tween->update(millis);
   
-  for (int i = 0; i < NUM_SSRS; i++) {
+  for (byte i = 0; i < NUM_SSRS; i++) {
     // update with new tween value
-    _ssrs[i].update(dim);
+    _ssrs[i].update(MAX_BRIGHT);
   }
 }

@@ -24,10 +24,10 @@ class PowerSSR
     void zeroCrossed();
     void burn(unsigned long currentMicros);
   private:
-    int _pin;
+    byte _pin;
     volatile boolean _zeroCrossed;
-    int _dim;
-    int _dimCount;
+    byte _dim;
+    byte _dimCount;
     unsigned long _previousMicros;
     boolean _isBurning;
 };

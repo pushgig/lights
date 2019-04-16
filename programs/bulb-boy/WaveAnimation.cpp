@@ -4,38 +4,44 @@
 
 #include "Arduino.h"
 #include <TweenDuino.h>
+#include "Config.h"
 #include "PowerSSR.h"
 #include "SSRAnimation.h"
 #include "WaveAnimation.h"
 
 WaveAnimation::WaveAnimation(PowerSSR* ssrs) : SSRAnimation(ssrs)
 {
-  _value = 127;
-  
-  TweenDuino::Tween::Ease ease = TweenDuino::Tween::Ease::QUAD;
-  TweenDuino::Tween::EaseType easeType = TweenDuino::Tween::EaseType::OUT;
-  
-  timeline.addTo(_value, 80, 5000);
-  timeline.addTo(_value, 120, 5000);
+  for (byte i = 0; i < NUM_SSRS; i++) {
+    _values[i] = MIN_BRIGHT;
+    
+    timelines[i].addTo(_values[i], 80, 1000);
+    timelines[i].addTo(_values[i], 120, 1000);
+  }
 }
 
-void WaveAnimation::begin(uint32_t millis) {
-  // nothing here
-  _value = 127;
-  timeline.restartFrom(millis);
+void WaveAnimation::start(uint32_t millis) {
+  for (byte i = 0; i < NUM_SSRS; i++) {
+    _values[i] = MIN_BRIGHT;
+    timelines[i].restartFrom(millis - (i * 250));
+  }
 }
 
 void WaveAnimation::update(uint32_t millis) {
-  timeline.update(millis);
-  int dim = round(_value);
   
-  for (int i = 0; i < NUM_SSRS; i++) {
+  for (byte i = 0; i < NUM_SSRS; i++) {
+    timelines[i].update(millis);
     // update with new tween value
-    _ssrs[i].update(dim);
+    _ssrs[i].update(_values[i]);
+    
+    // Restart the loop if we're finished!
+    if (timelines[i].isComplete()) {
+      timelines[i].restartFrom(millis);
+    }
   }
-  
-  // Restart the loop if we're finished!
-  if (timeline.isComplete()) {
-    timeline.restartFrom(millis);
-  }
+}
+
+void WaveAnimation::stop() {
+  // for (byte i = 0; i < NUM_SSRS; i++) {
+  //   timelines[i].wipe();
+  // }
 }

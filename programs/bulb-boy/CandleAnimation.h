@@ -1,8 +1,8 @@
 /*
-  StopAnimation.h
+  CandleAnimation.h
 */
-#ifndef StopAnimation_h
-#define StopAnimation_h
+#ifndef CandleAnimation_h
+#define CandleAnimation_h
 
 #include "Arduino.h"
 #include "PowerSSR.h"
@@ -10,16 +10,14 @@
 
 #include <TweenDuino.h>
 
-class StopAnimation : public SSRAnimation
+class CandleAnimation : public SSRAnimation
 {
   public:
-    StopAnimation(PowerSSR* ssrs);
-    virtual ~StopAnimation(){}
+    CandleAnimation(PowerSSR* ssrs);
+    virtual ~CandleAnimation(){}
     virtual void start(uint32_t millis);
     virtual void update(uint32_t millis);
     virtual void stop();
-  private:
-    float _value;
 };
 
 #endif

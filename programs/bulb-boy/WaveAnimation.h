@@ -15,11 +15,12 @@ class WaveAnimation : public SSRAnimation
   public:
     WaveAnimation(PowerSSR* ssrs);
     virtual ~WaveAnimation(){}
-    virtual void begin(uint32_t millis);
+    virtual void start(uint32_t millis);
     virtual void update(uint32_t millis);
+    virtual void stop();
   private:
-    TweenDuino::Timeline timeline;
-    float _value;
+    TweenDuino::Timeline timelines[NUM_SSRS];
+    float _values[NUM_SSRS];
 };
 
 #endif

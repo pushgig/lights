@@ -15,7 +15,7 @@ class PulseAnimation : public SSRAnimation
   public:
     PulseAnimation(PowerSSR* ssrs);
     virtual ~PulseAnimation(){}
-    virtual void begin(uint32_t millis);
+    virtual void start(uint32_t millis);
     virtual void update(uint32_t millis);
   private:
     TweenDuino::Timeline timeline;

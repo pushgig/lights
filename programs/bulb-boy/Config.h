@@ -1,0 +1,3 @@
+
+#define MAX_BRIGHT 10
+#define MIN_BRIGHT 127

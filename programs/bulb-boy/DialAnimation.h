@@ -15,11 +15,11 @@ class DialAnimation : public SSRAnimation
   public:
     DialAnimation(PowerSSR* ssrs);
     virtual ~DialAnimation(){}
-    virtual void begin(uint32_t millis);
+    virtual void start(uint32_t millis);
     virtual void update(uint32_t millis);
   private:
     TweenDuino::Tween *tween;
-    int _count;
+    byte _count;
     float _value;
 };
 
