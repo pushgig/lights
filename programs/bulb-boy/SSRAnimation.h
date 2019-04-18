@@ -15,21 +15,14 @@ class SSRAnimation
     }
     
     void intensity(byte value) {
-      Serial.print("Intensity: ");
-      Serial.println(value);
       _intensity = value;
     }
 
     void speed(byte value) {
-      Serial.print("Speed: ");
-      Serial.println(value);
       _speed = value;
     }
     
-    virtual ~SSRAnimation(){}
     virtual void start(uint32_t millis) = 0;
-    // virtual void intensity(byte value) = 0;
-    // virtual void speed(byte value) = 0;
     virtual void update(uint32_t millis) = 0;
     virtual void stop() = 0;
   protected:

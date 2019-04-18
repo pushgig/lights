@@ -4,14 +4,13 @@
 
 #include "Arduino.h"
 #include <TweenDuino.h>
-#include "Config.h"
 #include "PowerSSR.h"
 #include "SSRAnimation.h"
 #include "WaveAnimation.h"
 
 WaveAnimation::WaveAnimation(PowerSSR* ssrs) : SSRAnimation(ssrs)
 {
-  for (byte i = 0; i < NUM_SSRS; i++) {
+  for (byte i = 0; i < SSR_COUNT; i++) {
     _values[i] = MIN_BRIGHT;
     
     timelines[i].addTo(_values[i], 80, 1000);
@@ -20,15 +19,15 @@ WaveAnimation::WaveAnimation(PowerSSR* ssrs) : SSRAnimation(ssrs)
 }
 
 void WaveAnimation::start(uint32_t millis) {
-  for (byte i = 0; i < NUM_SSRS; i++) {
-    _values[i] = MIN_BRIGHT;
+  for (byte i = 0; i < SSR_COUNT; i++) {
+    timelines[i].begin(millis);
     timelines[i].restartFrom(millis - (i * 250));
   }
 }
 
 void WaveAnimation::update(uint32_t millis) {
   
-  for (byte i = 0; i < NUM_SSRS; i++) {
+  for (byte i = 0; i < SSR_COUNT; i++) {
     timelines[i].update(millis);
     // update with new tween value
     _ssrs[i].update(_values[i]);
@@ -41,7 +40,5 @@ void WaveAnimation::update(uint32_t millis) {
 }
 
 void WaveAnimation::stop() {
-  // for (byte i = 0; i < NUM_SSRS; i++) {
-  //   timelines[i].wipe();
-  // }
+
 }

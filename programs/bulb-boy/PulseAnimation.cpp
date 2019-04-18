@@ -3,8 +3,6 @@
 */
 
 #include "Arduino.h"
-#include <TweenDuino.h>
-#include "Config.h"
 #include "PowerSSR.h"
 #include "SSRAnimation.h"
 #include "PulseAnimation.h"
@@ -26,7 +24,7 @@ void PulseAnimation::start(uint32_t millis) {
 void PulseAnimation::update(uint32_t millis) {
   timeline.update(millis);
   
-  for (byte i = 0; i < NUM_SSRS; i++) {
+  for (byte i = 0; i < SSR_COUNT; i++) {
     // update with new tween value
     _ssrs[i].update(_value);
   }
@@ -35,4 +33,8 @@ void PulseAnimation::update(uint32_t millis) {
   if (timeline.isComplete()) {
     timeline.restartFrom(millis);
   }
+}
+
+void PulseAnimation::stop() {
+
 }

@@ -14,12 +14,9 @@ class StopAnimation : public SSRAnimation
 {
   public:
     StopAnimation(PowerSSR* ssrs);
-    virtual ~StopAnimation(){}
     virtual void start(uint32_t millis);
     virtual void update(uint32_t millis);
     virtual void stop();
-  private:
-    float _value;
 };
 
 #endif

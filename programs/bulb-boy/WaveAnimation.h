@@ -7,20 +7,18 @@
 #include "Arduino.h"
 #include "PowerSSR.h"
 #include "SSRAnimation.h"
-
 #include <TweenDuino.h>
 
 class WaveAnimation : public SSRAnimation
 {
   public:
     WaveAnimation(PowerSSR* ssrs);
-    virtual ~WaveAnimation(){}
     virtual void start(uint32_t millis);
     virtual void update(uint32_t millis);
     virtual void stop();
   private:
-    TweenDuino::Timeline timelines[NUM_SSRS];
-    float _values[NUM_SSRS];
+    TweenDuino::Timeline timelines[SSR_COUNT];
+    float _values[SSR_COUNT];
 };
 
 #endif

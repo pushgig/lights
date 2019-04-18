@@ -4,7 +4,6 @@
 
 #include "Arduino.h"
 #include "PowerSSR.h"
-#include <Ramp.h>
 
 PowerSSR::PowerSSR()
 {
@@ -15,35 +14,12 @@ void PowerSSR::init(int pin) {
   pinMode(pin, OUTPUT);
   _pin = pin;
   
-  // Default dimming level (0-128)  0 = on, 128 = off
-  _dim = 128;
+  // Default dimming level (0-127)  0 = on, 127 = off
+  _dim = MIN_BRIGHT;
   _dimCount = 0;
   _zeroCrossed = 0;
   _previousMicros = 0;
   _isBurning = 0;
-  
-  // start completely dimmed
-  value.go(128);
-}
-
-void PowerSSR::go(int dim) {
-  value.go(dim);
-}
-
-void PowerSSR::go(int dim, unsigned long dur) {
-  value.go(dim, dur);
-}
-
-void PowerSSR::go(int dim, unsigned long dur, ramp_mode rmode) {
-  value.go(dim, dur, rmode);
-}
-
-void PowerSSR::go(int dim, unsigned long dur, ramp_mode rmode, loop_mode lmode) {
-  value.go(dim, dur, rmode, lmode);
-}
-
-void PowerSSR::update() {
-  _dim = value.update();
 }
 
 void PowerSSR::update(int dim) {

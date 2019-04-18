@@ -14,7 +14,6 @@ class CandleAnimation : public SSRAnimation
 {
   public:
     CandleAnimation(PowerSSR* ssrs);
-    virtual ~CandleAnimation(){}
     virtual void start(uint32_t millis);
     virtual void update(uint32_t millis);
     virtual void stop();
