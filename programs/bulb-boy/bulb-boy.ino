@@ -40,7 +40,7 @@ PowerSSR ssrs[SSR_COUNT];
 // Create initial animation
 StopAnimation stop(ssrs);
 FloodAnimation flood(ssrs);
-// PulseAnimation pulse(ssrs);
+PulseAnimation pulse(ssrs);
 DialAnimation dial(ssrs);
 CandleAnimation candle(ssrs);
 WaveAnimation wave(ssrs);
@@ -266,16 +266,16 @@ void handleProgramChange(byte channel, byte program) {
   animation->stop();
   
   switch(number) {
-    // case 0:
+    case 0:
     default:
       animation = &stop;
       break;
     case 1:
       animation = &flood;
       break;
-    // case 2:
-    //   animation = &pulse;
-    //   break;
+    case 2:
+      animation = &pulse;
+      break;
     case 3:
       animation = &dial;
       break;
