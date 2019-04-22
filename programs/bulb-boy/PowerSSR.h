@@ -8,6 +8,9 @@
 #define MAX_BRIGHT 10
 #define MIN_BRIGHT 127
 
+#define MAX_DIM 127
+#define MIN_DIM 10
+
 class PowerSSR
 {
   public:

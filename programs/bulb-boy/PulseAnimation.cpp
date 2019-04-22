@@ -9,15 +9,14 @@
 
 PulseAnimation::PulseAnimation(PowerSSR* ssrs) : SSRAnimation(ssrs)
 {
-  _value = MIN_BRIGHT;
   
-  timeline.addTo(_value, 80, 5000);
-  timeline.addTo(_value, 120, 5000);
 }
 
 void PulseAnimation::start(uint32_t millis) {
   // nothing here
   _value = MIN_BRIGHT;
+  timeline.addTo(_value, 80, 5000);
+  timeline.addTo(_value, 120, 5000);
   timeline.restartFrom(millis);
 }
 
@@ -36,5 +35,5 @@ void PulseAnimation::update(uint32_t millis) {
 }
 
 void PulseAnimation::stop() {
-
+  timeline.wipe();
 }

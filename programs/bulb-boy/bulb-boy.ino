@@ -25,7 +25,7 @@ byte LCD_ADDRESS = 0x27;
 byte AC_FREQUENCY = 60;
 
 volatile byte speed = 100;
-volatile byte dim = 128;
+volatile byte intensity = MAX_BRIGHT;
 unsigned long currentMicros = 0;
 
 // Create instance of LCD library
@@ -43,9 +43,9 @@ FloodAnimation flood(ssrs);
 PulseAnimation pulse(ssrs);
 DialAnimation dial(ssrs);
 CandleAnimation candle(ssrs);
-WaveAnimation wave(ssrs);
+// WaveAnimation wave(ssrs);
 
-SSRAnimation* animation = &dial;
+SSRAnimation* animation = &flood;
 
 void setup()
 {
@@ -80,7 +80,7 @@ void setup()
   Timer1.attachInterrupt(handleTimerInterrupt, AC_FREQUENCY);
   
   // Tell the tween that time has changed and to adjust its calculations.
-  animation->start(millis());
+  startAnimation();
 }
 
 void loop()
@@ -230,14 +230,23 @@ void handleControlChange(byte channel, byte pitch, byte velocity) {
   
   if (pitch == 0x07) {
     // dimmer
-    animation->intensity(127 - velocity);
+    intensity = 127 - velocity;
   }
   
   if (pitch == 0x1B) {
     // speed
     // speed = (100 + 3000) - map(vel, 0, 127, 100, 3000);
-    animation->speed(127 - velocity);
+    speed = 127 - velocity;
   }
+  
+  animation->speed(speed);
+  animation->intensity(intensity);
+}
+
+void startAnimation() {
+  animation->speed(speed);
+  animation->intensity(intensity);
+  animation->start(millis());
 }
 
 void handleProgramChange(byte channel, byte program) { 
@@ -251,10 +260,6 @@ void handleProgramChange(byte channel, byte program) {
   // lcd.setCursor(0, 2);
   // lcd.print("Number: ");
   // lcd.print(number);
-  
-  lcd.setCursor(0, 0);
-  lcd.print("FREE MEMORY: ");
-  lcd.print(freeMemory());
   
   byte number = program % 10;
 
@@ -282,10 +287,14 @@ void handleProgramChange(byte channel, byte program) {
     case 4:
       animation = &candle;
       break;
-    case 5:
-      animation = &wave;
-      break;
+    // case 5:
+    //   animation = &wave;
+    //   break;
   }
   
-  animation->start(millis());
+  startAnimation();
+  
+  lcd.setCursor(0, 0);
+  lcd.print("FREE MEMORY: ");
+  lcd.print(freeMemory());
 }

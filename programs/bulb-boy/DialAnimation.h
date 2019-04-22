@@ -18,7 +18,6 @@ class DialAnimation : public SSRAnimation
     virtual void update(uint32_t millis);
     virtual void stop();
   private:
-    // TweenDuino::Tween *tween;
     byte _count;
     float _value;
 };
