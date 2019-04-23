@@ -8,8 +8,6 @@
 #include "PowerSSR.h"
 #include "SSRAnimation.h"
 
-#include <TweenDuino.h>
-
 class PulseAnimation : public SSRAnimation
 {
   public:
@@ -17,9 +15,6 @@ class PulseAnimation : public SSRAnimation
     virtual void start(uint32_t millis);
     virtual void update(uint32_t millis);
     virtual void stop();
-  private:
-    TweenDuino::Timeline timeline;
-    float _value;
 };
 
 #endif

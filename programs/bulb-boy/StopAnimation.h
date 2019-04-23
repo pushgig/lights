@@ -8,8 +8,6 @@
 #include "PowerSSR.h"
 #include "SSRAnimation.h"
 
-#include <TweenDuino.h>
-
 class StopAnimation : public SSRAnimation
 {
   public:

@@ -38,14 +38,7 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 PowerSSR ssrs[SSR_COUNT];
 
 // Create initial animation
-StopAnimation stop(ssrs);
-FloodAnimation flood(ssrs);
-PulseAnimation pulse(ssrs);
-DialAnimation dial(ssrs);
-CandleAnimation candle(ssrs);
-// WaveAnimation wave(ssrs);
-
-SSRAnimation* animation = &flood;
+SSRAnimation* animation = new FloodAnimation(ssrs);
 
 void setup()
 {
@@ -269,27 +262,29 @@ void handleProgramChange(byte channel, byte program) {
   
   // stop current animation
   animation->stop();
+  delete animation;
+  animation = nullptr;
   
   switch(number) {
-    case 0:
+    // case 0:
     default:
-      animation = &stop;
+      animation = new StopAnimation(ssrs);
       break;
     case 1:
-      animation = &flood;
+      animation = new FloodAnimation(ssrs);
       break;
     case 2:
-      animation = &pulse;
+      animation = new PulseAnimation(ssrs);
       break;
     case 3:
-      animation = &dial;
+      animation = new DialAnimation(ssrs);
       break;
     case 4:
-      animation = &candle;
+      animation = new CandleAnimation(ssrs);
       break;
-    // case 5:
-    //   animation = &wave;
-    //   break;
+    case 5:
+      animation = new WaveAnimation(ssrs);
+      break;
   }
   
   startAnimation();

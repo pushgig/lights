@@ -8,8 +8,6 @@
 #include "PowerSSR.h"
 #include "SSRAnimation.h"
 
-#include <TweenDuino.h>
-
 class DialAnimation : public SSRAnimation
 {
   public:
@@ -19,7 +17,6 @@ class DialAnimation : public SSRAnimation
     virtual void stop();
   private:
     byte _count;
-    float _value;
 };
 
 #endif

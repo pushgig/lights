@@ -11,6 +11,8 @@
 #define MAX_DIM 127
 #define MIN_DIM 10
 
+#include <TweenDuino.h>
+
 class PowerSSR
 {
   public:
@@ -19,6 +21,8 @@ class PowerSSR
     void update(int dim);
     void zeroCrossed();
     void burn(unsigned long currentMicros);
+    TweenDuino::Timeline timeline;
+    float value = MAX_DIM;
   private:
     byte _pin;
     volatile boolean _zeroCrossed;
