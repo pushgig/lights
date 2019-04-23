@@ -56,5 +56,4 @@ void PowerSSR::burn(unsigned long currentMicros)
       _dimCount++;
     }
   }
-  
 }

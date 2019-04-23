@@ -13,7 +13,6 @@ PulseAnimation::PulseAnimation(PowerSSR* ssrs) : SSRAnimation(ssrs)
 }
 
 void PulseAnimation::start(uint32_t millis) {
-  // nothing here
   for (byte i = 0; i < SSR_COUNT; i++) {
     _ssrs[i].value = MIN_BRIGHT;
     _ssrs[i].timeline.addTo(_ssrs[i].value, 80, 5000);
@@ -25,11 +24,9 @@ void PulseAnimation::start(uint32_t millis) {
 
 void PulseAnimation::update(uint32_t millis) {
   for (byte i = 0; i < SSR_COUNT; i++) {
-    // update with new tween value
     _ssrs[i].timeline.update(millis);
     _ssrs[i].update(_ssrs[i].value);
     
-    // Restart the loop if we're finished!
     if (_ssrs[i].timeline.isComplete()) {
       _ssrs[i].timeline.restartFrom(millis);
     }

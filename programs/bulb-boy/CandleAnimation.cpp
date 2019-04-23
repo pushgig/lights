@@ -13,7 +13,7 @@ CandleAnimation::CandleAnimation(PowerSSR* ssrs) : SSRAnimation(ssrs)
 }
 
 void CandleAnimation::start(uint32_t millis) {
-  // nothing here
+
 }
 
 void CandleAnimation::update(uint32_t millis) {
@@ -25,5 +25,5 @@ void CandleAnimation::update(uint32_t millis) {
 }
 
 void CandleAnimation::stop() {
-  // nothing here
+
 }

@@ -4,6 +4,8 @@
 #ifndef PowerSSR_h
 #define PowerSSR_h
 
+// 60hz AC mains
+#define AC_FREQUENCY 60
 #define SSR_COUNT 5
 #define MAX_BRIGHT 10
 #define MIN_BRIGHT 127
@@ -21,6 +23,7 @@ class PowerSSR
     void update(int dim);
     void zeroCrossed();
     void burn(unsigned long currentMicros);
+    void wipe();
     TweenDuino::Timeline timeline;
     float value = MAX_DIM;
   private:
