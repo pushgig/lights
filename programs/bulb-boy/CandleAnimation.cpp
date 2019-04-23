@@ -17,10 +17,9 @@ void CandleAnimation::start(uint32_t millis) {
 }
 
 void CandleAnimation::update(uint32_t millis) {
-  if (millis % map(_speed, 0, 127, 10, 250) == 0) {
+  if (millis % map(_speed, 0, 127, 10, 500) == 0) {
     for (byte i = 0; i < SSR_COUNT; i++) {
-      // update with new tween value
-      _ssrs[i].update(map(_intensity, 0, 127, 60, 100) + random(0, 20));
+      _ssrs[i].update(map(_intensity, 0, 127, 60, 90) + random(0, 30));
     }
   }
 }

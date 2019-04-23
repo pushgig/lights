@@ -231,9 +231,6 @@ void handleControlChange(byte channel, byte pitch, byte velocity) {
     // speed = (100 + 3000) - map(vel, 0, 127, 100, 3000);
     speed = 127 - velocity;
   }
-  
-  animation->speed(speed);
-  animation->intensity(intensity);
 }
 
 void startAnimation() {
