@@ -48,7 +48,7 @@ void setup()
   
   // TODO: perform a quick system check and 
   // only print FUCK YEAH if everything passes
-  lcd.print("FUCK YEAH");
+  lcd.print(F("FUCK YEAH"));
   
   pinMode(LED, OUTPUT);
   
@@ -257,7 +257,7 @@ void handleProgramChange(byte channel, byte program) {
   byte number = program % 10;
 
   lcd.setCursor(0, 1);
-  lcd.print("ANIMATION: ");
+  lcd.print(F("ANIMATION: "));
   lcd.print(number);
   
   // stop current animation
@@ -290,6 +290,6 @@ void handleProgramChange(byte channel, byte program) {
   startAnimation();
   
   lcd.setCursor(0, 0);
-  lcd.print("FREE MEMORY: ");
+  lcd.print(F("FREE MEMORY: "));
   lcd.print(freeMemory());
 }
