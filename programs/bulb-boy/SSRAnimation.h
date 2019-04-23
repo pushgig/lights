@@ -22,6 +22,12 @@ class SSRAnimation
       _speed = value;
     }
     
+    void destroy() {
+      for (byte i = 0; i < SSR_COUNT; i++) {
+        _ssrs[i].timeline.wipe();
+      }
+    }
+    
     virtual void start(uint32_t millis) = 0;
     virtual void update(uint32_t millis) = 0;
     virtual void stop() = 0;

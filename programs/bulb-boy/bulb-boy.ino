@@ -99,37 +99,45 @@ void handleZeroCrossInterrupt()
 }
 
 void handleNoteOn(byte channel, byte pitch, byte velocity) { 
-  lcd.clear();
-  lcd.print(F("MIDI: Note On"));
-  lcd.setCursor(0, 1);
-  lcd.print(F("Pitch: "));
-  lcd.print(pitch);
-  lcd.setCursor(0, 2);
-  lcd.print(F("Velocity: "));
-  lcd.print(velocity);
+  // lcd.clear();
+  // lcd.print(F("MIDI: Note On"));
+  // lcd.setCursor(0, 1);
+  // lcd.print(F("Pitch: "));
+  // lcd.print(pitch);
+  // lcd.setCursor(0, 2);
+  // lcd.print(F("Velocity: "));
+  // lcd.print(velocity);
 }
 
 // * A NOTE ON message with Velocity = 0 will be treated as a NOTE OFF message *
 void handleNoteOff(byte channel, byte pitch, byte velocity) { 
-  lcd.clear();
-  lcd.print(F("MIDI: Note Off"));
-  lcd.setCursor(0, 1);
-  lcd.print(F("Pitch: "));
-  lcd.print(pitch);
-  lcd.setCursor(0, 2);
-  lcd.print(F("Velocity: "));
-  lcd.print(velocity);
+  // lcd.clear();
+  // lcd.print(F("MIDI: Note Off"));
+  // lcd.setCursor(0, 1);
+  // lcd.print(F("Pitch: "));
+  // lcd.print(pitch);
+  // lcd.setCursor(0, 2);
+  // lcd.print(F("Velocity: "));
+  // lcd.print(velocity);
 }
 
 void handleControlChange(byte channel, byte pitch, byte velocity) { 
-  lcd.clear();
-  lcd.print(F("MIDI: Control Change"));
-  lcd.setCursor(0, 1);
-  lcd.print(F("Pitch: "));
-  lcd.print(pitch);
-  lcd.setCursor(0, 2);
-  lcd.print(F("Velocity: "));
-  lcd.print(velocity);
+  // lcd.clear();
+  // lcd.print(F("MIDI: Control Change"));
+  // lcd.setCursor(0, 1);
+  // lcd.print(F("Pitch: "));
+  // lcd.print(pitch);
+  // lcd.setCursor(0, 2);
+  // lcd.print(F("Velocity: "));
+  // lcd.print(velocity);
+  
+  if (pitch == 0x07) {
+    intensity = 127 - velocity;
+  }
+
+  if (pitch == 0x1B) {
+    speed = 127 - velocity;
+  }
 }
 
 void startAnimation() {
@@ -141,18 +149,11 @@ void startAnimation() {
 void handleProgramChange(byte channel, byte program) { 
   digitalWrite(LED, LOW);
   
-  lcd.clear();
-  lcd.print(F("MIDI: Program Change"));
-  lcd.setCursor(0, 1);
-  lcd.print(F("CHN: "));
-  lcd.print(channel);
-  lcd.print(F(" PRG: "));
-  lcd.print(program);
-  
   byte number = program % 10;
   
   // stop current animation
   animation->stop();
+  animation->destroy();
   delete animation;
   animation = nullptr;
   
@@ -183,6 +184,13 @@ void handleProgramChange(byte channel, byte program) {
   
   startAnimation();
   
+  lcd.clear();
+  lcd.print(F("MIDI: Program Change"));
+  lcd.setCursor(0, 1);
+  lcd.print(F("CHN: "));
+  lcd.print(channel);
+  lcd.print(F(" PRG: "));
+  lcd.print(program);
   lcd.setCursor(0, 2);
   lcd.print(F("PTN: "));
   lcd.print(number);

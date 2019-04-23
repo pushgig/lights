@@ -17,7 +17,7 @@ void RainAnimation::start(uint32_t millis) {
   
   for (byte i = 0; i < SSR_COUNT; i++) {
     _ssrs[i].timeline.addTo(_ssrs[i].value, intensity, 50);
-    _ssrs[i].timeline.addTo(_ssrs[i].value, intensity + 30, 800);
+    _ssrs[i].timeline.addTo(_ssrs[i].value, intensity + 30, 1000);
   }
 }
 
@@ -33,7 +33,4 @@ void RainAnimation::update(uint32_t millis) {
 }
 
 void RainAnimation::stop() {
-  for (byte i = 0; i < SSR_COUNT; i++) {
-    _ssrs[i].timeline.wipe();
-  }
 }

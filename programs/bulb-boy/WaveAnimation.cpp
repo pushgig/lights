@@ -36,7 +36,5 @@ void WaveAnimation::update(uint32_t millis) {
 }
 
 void WaveAnimation::stop() {
-  for (byte i = 0; i < SSR_COUNT; i++) {
-    _ssrs[i].timeline.wipe();
-  }
+
 }
