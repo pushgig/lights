@@ -32,5 +32,10 @@ void RainAnimation::update(uint32_t millis) {
   }
 }
 
+void RainAnimation::bump(uint32_t millis) {
+
+}
+
 void RainAnimation::stop() {
+
 }

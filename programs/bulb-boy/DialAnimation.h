@@ -14,6 +14,7 @@ class DialAnimation : public SSRAnimation
     DialAnimation(PowerSSR* ssrs);
     virtual void start(uint32_t millis);
     virtual void update(uint32_t millis);
+    virtual void bump(uint32_t millis);
     virtual void stop();
   private:
     byte _count;

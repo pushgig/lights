@@ -36,6 +36,7 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 PowerSSR ssrs[SSR_COUNT];
 
 // Create initial animation
+byte animationIndex = 0;
 SSRAnimation* animation = new StopAnimation(ssrs);
 
 void setup()
@@ -70,9 +71,6 @@ void setup()
   // initialize timer
   Timer1.initialize(AC_FREQUENCY);
   Timer1.attachInterrupt(handleTimerInterrupt, AC_FREQUENCY);
-  
-  // start the first animation
-  startAnimation();
 }
 
 void loop()
@@ -80,6 +78,55 @@ void loop()
   // Continuously check if Midi data has been received.
   MIDI.read();
   animation->update(millis());
+}
+
+void updateAnimation(byte nextAnimationIndex) {
+  if (nextAnimationIndex == animationIndex && animation->canBump) {
+    animation->bump(millis());
+  } else {
+    // stop current animation
+    animation->stop();
+    animation->destroy();
+    delete animation;
+    animation = nullptr;
+    
+    animationIndex = nextAnimationIndex;
+    
+    switch(animationIndex) {
+      // momentaries
+      case 0:
+      default:
+        // none
+        animation = new StopAnimation(ssrs);
+        break;
+      case 1:
+        // some
+        animation = new DialAnimation(ssrs);
+        break;
+      case 2:
+        // all
+        animation = new FloodAnimation(ssrs);
+        break;
+        
+      // patterns
+      case 5:
+        animation = new PulseAnimation(ssrs);
+        break;
+      case 6:
+        animation = new WaveAnimation(ssrs);
+        break;
+      case 7:
+        animation = new CandleAnimation(ssrs);
+        break;
+      case 8:
+        animation = new RainAnimation(ssrs);
+        break;
+    }
+    
+    animation->speed(speed);
+    animation->intensity(intensity);
+    animation->start(millis());
+  }
 }
 
 // Functions
@@ -140,49 +187,8 @@ void handleControlChange(byte channel, byte pitch, byte velocity) {
   }
 }
 
-void startAnimation() {
-  animation->speed(speed);
-  animation->intensity(intensity);
-  animation->start(millis());
-}
-
 void handleProgramChange(byte channel, byte program) { 
-  digitalWrite(LED, LOW);
-  
-  byte number = program % 10;
-  
-  // stop current animation
-  animation->stop();
-  animation->destroy();
-  delete animation;
-  animation = nullptr;
-  
-  switch(number) {
-    case 0:
-    default:
-      animation = new StopAnimation(ssrs);
-      break;
-    case 1:
-      animation = new FloodAnimation(ssrs);
-      break;
-    case 2:
-      animation = new PulseAnimation(ssrs);
-      break;
-    case 3:
-      animation = new DialAnimation(ssrs);
-      break;
-    case 4:
-      animation = new CandleAnimation(ssrs);
-      break;
-    case 5:
-      animation = new WaveAnimation(ssrs);
-      break;
-    case 6:
-      animation = new RainAnimation(ssrs);
-      break;
-  }
-  
-  startAnimation();
+  updateAnimation(program % 10);
   
   lcd.clear();
   lcd.print(F("MIDI: Program Change"));
@@ -193,7 +199,7 @@ void handleProgramChange(byte channel, byte program) {
   lcd.print(program);
   lcd.setCursor(0, 2);
   lcd.print(F("PTN: "));
-  lcd.print(number);
+  lcd.print(animationIndex);
   lcd.print(F(" MEM: "));
   lcd.print(freeMemory());
 }

@@ -35,6 +35,10 @@ void WaveAnimation::update(uint32_t millis) {
   }
 }
 
+void WaveAnimation::bump(uint32_t millis) {
+
+}
+
 void WaveAnimation::stop() {
 
 }

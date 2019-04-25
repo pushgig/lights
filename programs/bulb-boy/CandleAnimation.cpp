@@ -24,6 +24,10 @@ void CandleAnimation::update(uint32_t millis) {
   }
 }
 
+void CandleAnimation::bump(uint32_t millis) {
+
+}
+
 void CandleAnimation::stop() {
 
 }

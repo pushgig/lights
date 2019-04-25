@@ -28,8 +28,10 @@ class SSRAnimation
       }
     }
     
+    boolean canBump = 0;
     virtual void start(uint32_t millis) = 0;
     virtual void update(uint32_t millis) = 0;
+    virtual void bump(uint32_t millis) = 0;
     virtual void stop() = 0;
   protected:
     PowerSSR* _ssrs;

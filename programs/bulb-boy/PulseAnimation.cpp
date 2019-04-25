@@ -33,6 +33,10 @@ void PulseAnimation::update(uint32_t millis) {
   }
 }
 
+void PulseAnimation::bump(uint32_t millis) {
+
+}
+
 void PulseAnimation::stop() {
 
 }

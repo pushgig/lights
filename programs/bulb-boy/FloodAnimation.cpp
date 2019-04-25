@@ -16,7 +16,6 @@ FloodAnimation::FloodAnimation(PowerSSR* ssrs) : SSRAnimation(ssrs)
 void FloodAnimation::start(uint32_t millis) {
   TweenDuino::Tween::Ease ease = TweenDuino::Tween::Ease::QUINT;
   TweenDuino::Tween::EaseType easeType = TweenDuino::Tween::EaseType::IN;
-
   
   for (byte i = 0; i < SSR_COUNT; i++) {
     _ssrs[i].value = map(_intensity, 0, 127, MAX_BRIGHT, 80);
@@ -34,6 +33,10 @@ void FloodAnimation::update(uint32_t millis) {
       _ssrs[i].timeline.restartFrom(millis);
     }
   }
+}
+
+void FloodAnimation::bump(uint32_t millis) {
+  
 }
 
 void FloodAnimation::stop() {
