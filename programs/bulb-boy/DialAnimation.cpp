@@ -18,7 +18,7 @@ void DialAnimation::start(uint32_t millis) {
   TweenDuino::Tween::Ease ease = TweenDuino::Tween::Ease::QUINT;
   TweenDuino::Tween::EaseType easeType = TweenDuino::Tween::EaseType::IN;
 
-  unsigned short int duration = map(_speed, 0, 127, 500, 200);
+  unsigned short int duration = map(_speed, 0, 127, 400, 200);
   byte brightness = map(_intensity, 0, 127, LIGHT_MED, LIGHT_MAX);
   
   for (byte i = 0; i < SSR_COUNT; i++) {
