@@ -11,6 +11,7 @@
 #include "PowerSSR.h"
 #include "SSRAnimation.h"
 #include "StopAnimation.h"
+#include "IdleAnimation.h"
 #include "FloodAnimation.h"
 #include "PulseAnimation.h"
 #include "DialAnimation.h"
@@ -23,7 +24,7 @@ byte LCD_ADDRESS = 0x27;
 
 // TODO: make intensity and speed based on NOTE ON octave & velocity
 volatile byte speed = 100;
-volatile byte intensity = MAX_BRIGHT;
+volatile byte intensity = LIGHT_MIN;
 unsigned long currentMicros = 0;
 
 // Create instance of LCD library
@@ -35,9 +36,11 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 // Create instances of SSRs
 PowerSSR ssrs[SSR_COUNT];
 
-// Create initial animation
 byte animationIndex = 0;
-SSRAnimation* animation = new StopAnimation(ssrs);
+
+// Initial animation is just a low-level flood to make it easier
+// to see which lamps are working right after boot
+SSRAnimation* animation;
 
 void setup()
 {
@@ -71,6 +74,9 @@ void setup()
   // initialize timer
   Timer1.initialize(AC_FREQUENCY);
   Timer1.attachInterrupt(handleTimerInterrupt, AC_FREQUENCY);
+  
+  animation = new IdleAnimation(ssrs);
+  animation->start(millis());
 }
 
 void loop()
@@ -80,8 +86,31 @@ void loop()
   animation->update(millis());
 }
 
+boolean hasAnimation(byte nextAnimationIndex) {
+  switch(nextAnimationIndex) {
+    // momentaries
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+      return 1;
+  }
+  
+  return 0;
+}
+
 void updateAnimation(byte nextAnimationIndex) {
+  if (!hasAnimation(nextAnimationIndex)) {
+    return;
+  }
+  
   if (nextAnimationIndex == animationIndex && animation->canBump) {
+    animation->speed(speed);
+    animation->intensity(intensity);
     animation->bump(millis());
   } else {
     // stop current animation
@@ -95,15 +124,18 @@ void updateAnimation(byte nextAnimationIndex) {
     switch(animationIndex) {
       // momentaries
       case 0:
-      default:
         // none
         animation = new StopAnimation(ssrs);
         break;
       case 1:
         // some
-        animation = new DialAnimation(ssrs);
+        animation = new IdleAnimation(ssrs);
         break;
       case 2:
+        // all
+        animation = new DialAnimation(ssrs);
+        break;
+      case 3:
         // all
         animation = new FloodAnimation(ssrs);
         break;
@@ -116,10 +148,12 @@ void updateAnimation(byte nextAnimationIndex) {
         animation = new WaveAnimation(ssrs);
         break;
       case 7:
-        animation = new CandleAnimation(ssrs);
+        animation = new RainAnimation(ssrs);
         break;
       case 8:
-        animation = new RainAnimation(ssrs);
+        animation = new CandleAnimation(ssrs);
+        break;
+      default:
         break;
     }
     
@@ -179,11 +213,11 @@ void handleControlChange(byte channel, byte pitch, byte velocity) {
   // lcd.print(velocity);
   
   if (pitch == 0x07) {
-    intensity = 127 - velocity;
+    speed = velocity;
   }
 
   if (pitch == 0x1B) {
-    speed = 127 - velocity;
+    intensity = velocity;
   }
 }
 
@@ -202,4 +236,9 @@ void handleProgramChange(byte channel, byte program) {
   lcd.print(animationIndex);
   lcd.print(F(" MEM: "));
   lcd.print(freeMemory());
+  lcd.setCursor(0, 3);
+  lcd.print(F("INT: "));
+  lcd.print(intensity);
+  lcd.print(F(" SPD: "));
+  lcd.print(speed);
 }

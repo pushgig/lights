@@ -15,15 +15,15 @@ void PowerSSR::init(int pin) {
   _pin = pin;
   
   // Default dimming level (0-127)  0 = on, 127 = off
-  _dim = MIN_BRIGHT;
+  _dim = 127;
   _dimCount = 0;
   _zeroCrossed = 0;
   _previousMicros = 0;
   _isBurning = 0;
 }
 
-void PowerSSR::update(int dim) {
-  _dim = dim;
+void PowerSSR::update(int brightness) {
+  _dim = 127 - constrain(brightness, 0, 127);
 }
 
 void PowerSSR::zeroCrossed()

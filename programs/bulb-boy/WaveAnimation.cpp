@@ -14,9 +14,12 @@ WaveAnimation::WaveAnimation(PowerSSR* ssrs) : SSRAnimation(ssrs)
 }
 
 void WaveAnimation::start(uint32_t millis) {
+  unsigned short int duration = map(_speed, 0, 127, 1500, 600);
+  byte brightness = map(_intensity, 0, 127, LIGHT_MED, LIGHT_MAX);
+  
   for (byte i = 0; i < SSR_COUNT; i++) {
-    _ssrs[i].timeline.addTo(_ssrs[i].value, 80, 1000);
-    _ssrs[i].timeline.addTo(_ssrs[i].value, 120, 1000);
+    _ssrs[i].timeline.addTo(_ssrs[i].value, LIGHT_MIN, duration);
+    _ssrs[i].timeline.addTo(_ssrs[i].value, brightness, duration);
     _ssrs[i].timeline.begin(millis);
     _ssrs[i].timeline.restartFrom(millis - (i * 250));
   }

@@ -7,11 +7,11 @@
 // 60hz AC mains
 #define AC_FREQUENCY 60
 #define SSR_COUNT 5
-#define MAX_BRIGHT 10
-#define MIN_BRIGHT 127
 
-#define MAX_DIM 127
-#define MIN_DIM 10
+#define LIGHT_OFF 0
+#define LIGHT_MIN 8
+#define LIGHT_MED 30
+#define LIGHT_MAX 60
 
 #include <TweenDuino.h>
 
@@ -20,12 +20,12 @@ class PowerSSR
   public:
     PowerSSR();
     void init(int pin);
-    void update(int dim);
+    void update(int brightness);
     void zeroCrossed();
     void burn(unsigned long currentMicros);
     void wipe();
     TweenDuino::Timeline timeline;
-    float value = MAX_DIM;
+    float value = LIGHT_MIN;
   private:
     byte _pin;
     volatile boolean _zeroCrossed;
