@@ -15,6 +15,7 @@ StopAnimation::StopAnimation(PowerSSR* ssrs) : SSRAnimation(ssrs)
 
 void StopAnimation::start(uint32_t millis) {
   for (byte i = 0; i < SSR_COUNT; i++) {
+    _ssrs[i].value = LIGHT_OFF;
     _ssrs[i].update(LIGHT_OFF);
   }
 }

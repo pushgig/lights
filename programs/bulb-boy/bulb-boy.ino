@@ -11,7 +11,7 @@
 #include "PowerSSR.h"
 #include "SSRAnimation.h"
 #include "StopAnimation.h"
-#include "IdleAnimation.h"
+#include "HitAnimation.h"
 #include "FloodAnimation.h"
 #include "PulseAnimation.h"
 #include "DialAnimation.h"
@@ -23,7 +23,7 @@ byte LED = 0;
 byte LCD_ADDRESS = 0x27;
 
 // TODO: make intensity and speed based on NOTE ON octave & velocity
-volatile byte speed = 100;
+volatile byte speed = 0;
 volatile byte intensity = LIGHT_MIN;
 unsigned long currentMicros = 0;
 
@@ -75,7 +75,8 @@ void setup()
   Timer1.initialize(AC_FREQUENCY);
   Timer1.attachInterrupt(handleTimerInterrupt, AC_FREQUENCY);
   
-  animation = new IdleAnimation(ssrs);
+  animation = new FloodAnimation(ssrs);
+  animation->intensity(LIGHT_MIN);
   animation->start(millis());
 }
 
@@ -88,11 +89,12 @@ void loop()
 
 boolean hasAnimation(byte nextAnimationIndex) {
   switch(nextAnimationIndex) {
-    // momentaries
+    // bottom row
     case 0:
     case 1:
     case 2:
     case 3:
+    // top row
     case 5:
     case 6:
     case 7:
@@ -122,25 +124,24 @@ void updateAnimation(byte nextAnimationIndex) {
     animationIndex = nextAnimationIndex;
     
     switch(animationIndex) {
-      // momentaries
+      // bottom row
       case 0:
-        // none
         animation = new StopAnimation(ssrs);
         break;
       case 1:
-        // some
-        animation = new IdleAnimation(ssrs);
-        break;
-      case 2:
-        // all
         animation = new DialAnimation(ssrs);
         break;
+      case 2:
+        animation = new HitAnimation(ssrs);
+        break;
       case 3:
-        // all
         animation = new FloodAnimation(ssrs);
         break;
+      case 4:
+        // empty
+        break;
         
-      // patterns
+      // top row
       case 5:
         animation = new PulseAnimation(ssrs);
         break;
@@ -152,6 +153,9 @@ void updateAnimation(byte nextAnimationIndex) {
         break;
       case 8:
         animation = new CandleAnimation(ssrs);
+        break;
+      case 9:
+        // empty
         break;
       default:
         break;
@@ -213,11 +217,11 @@ void handleControlChange(byte channel, byte pitch, byte velocity) {
   // lcd.print(velocity);
   
   if (pitch == 0x07) {
-    speed = velocity;
+    intensity = velocity;
   }
 
   if (pitch == 0x1B) {
-    intensity = velocity;
+    speed = velocity;
   }
 }
 

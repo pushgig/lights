@@ -1,17 +1,16 @@
 /*
-  IdleAnimation.h
+  HitAnimation.h
 */
-#ifndef IdleAnimation_h
-#define IdleAnimation_h
+#ifndef HitAnimation_h
+#define HitAnimation_h
 
-#include "Arduino.h"
 #include "PowerSSR.h"
 #include "SSRAnimation.h"
 
-class IdleAnimation : public SSRAnimation
+class HitAnimation : public SSRAnimation
 {
   public:
-    IdleAnimation(PowerSSR* ssrs);
+    HitAnimation(PowerSSR* ssrs);
     virtual void start(uint32_t millis);
     virtual void update(uint32_t millis);
     virtual void bump(uint32_t millis);
